@@ -32,7 +32,7 @@ const FloatingCart: React.FC = () => {
   const totalItensInCart = useMemo(() => {
     // TODO RETURN THE SUM OF THE QUANTITY OF THE PRODUCTS IN THE CART
 
-    return 0;
+    return products.length;
   }, [products]);
 
   return (
