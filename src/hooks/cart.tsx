@@ -42,18 +42,13 @@ const CartProvider: React.FC = ({ children }) => {
     loadProducts();
   }, []);
 
-  useEffect(() => {
-    async function saveInAsyncStorage(data: Product[]): Promise<void> {
-      await AsyncStorage.removeItem('@GoMarketPlace:product');
-      await AsyncStorage.setItem(
-        '@GoMarketPlace:product',
-        JSON.stringify(data),
-      );
-      console.log('test');
-    }
+  const saveInAsyncStorage = useCallback(async (data: Product[]): Promise<
+    void
+  > => {
+    await AsyncStorage.removeItem('@GoMarketPlace:product');
 
-    saveInAsyncStorage(products);
-  }, [products]);
+    await AsyncStorage.setItem('@GoMarketPlace:product', JSON.stringify(data));
+  }, []);
 
   const addToCart = useCallback(
     async newProduct => {
@@ -72,9 +67,10 @@ const CartProvider: React.FC = ({ children }) => {
       } else {
         newProduct.quantity = 1;
         setProducts([...products, newProduct]);
+        saveInAsyncStorage([...products, newProduct]);
       }
     },
-    [products],
+    [products, saveInAsyncStorage],
   );
 
   const increment = useCallback(
@@ -86,8 +82,9 @@ const CartProvider: React.FC = ({ children }) => {
         return product;
       });
       setProducts(newProduct);
+      saveInAsyncStorage(newProduct);
     },
-    [products],
+    [products, saveInAsyncStorage],
   );
 
   const decrement = useCallback(
@@ -99,8 +96,9 @@ const CartProvider: React.FC = ({ children }) => {
         return product;
       });
       setProducts(newProduct);
+      saveInAsyncStorage(newProduct);
     },
-    [products],
+    [products, saveInAsyncStorage],
   );
 
   const value = React.useMemo(
